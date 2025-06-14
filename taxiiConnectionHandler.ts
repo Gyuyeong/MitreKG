@@ -64,6 +64,18 @@ class TaxiiConnectionHandler {
             }
         })
     }
+
+    async getObjectById(objectId: string): Promise<any> {
+        const url = `collections/${this._collectionId}/objects/${objectId}`
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await this._instance.get(url)
+                resolve(response.data.objects[0])
+            } catch (error: any) {
+                reject(error)
+            }
+        })
+    }
 }
 
 export default TaxiiConnectionHandler

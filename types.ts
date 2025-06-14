@@ -23,7 +23,15 @@ export type ObjectType = "attack-pattern"
                         | "x-mitre-matrix" 
                         | "x-mitre-data-source"
 
-export type RelationshipType = "mitigates" | "uses" | "subtechniques-of" | "detects" | "revoked-by" | "attributed-to"
+export type RelationshipType = "mitigates" 
+                            | "uses" 
+                            | "subtechniques-of" 
+                            | "detects" 
+                            | "revoked-by" 
+                            | "attributed-to" 
+                            | "component-of"
+                            | "tactic-of"
+                            | "techniques-of"
 
 export type RelationshipDataType = {
     id: string,
@@ -42,4 +50,44 @@ export type RelationshipDataType = {
     x_mitre_deprecated: boolean,
     x_mitre_attack_spec_version: string,
     external_references: any[]
+}
+
+export type KillChainPhases = "reconnaissance" 
+                            | "resource-development" 
+                            | "initial-access" 
+                            | "execution" 
+                            | "persistence" 
+                            | "privilege-escalation" 
+                            | "defense-evasion"
+                            | "credential-access" 
+                            | "discovery" 
+                            | "lateral-movement" 
+                            | "collection" 
+                            | "command-and-control" 
+                            | "exfiltration" 
+                            | "impact"
+
+export type ExternalReferenceDataType = {
+    source_name: string,
+    url: string,
+    description: string | null,
+    external_id: string | null
+}
+
+export type AttackPatternDataType = {
+    id: string,
+    modified: Date,
+    created: Date,
+    type: ObjectType,
+    external_references: ExternalReferenceDataType[],
+    object_marking_refs: string[],
+    name: string,
+    description: string,
+    kill_chain_phases: KillChainPhases[],
+    x_mitre_detection: string,
+    x_mitre_domains: string[],
+    x_mitre_is_subtechnique: boolean,
+    x_mitre_platforms: string[],
+    x_mitre_data_sources: string[],
+    x_mitre_impact_type: string[],
 }
