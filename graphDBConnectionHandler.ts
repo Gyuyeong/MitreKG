@@ -48,13 +48,6 @@ class GraphDBConnectionHandler {
                     description
                 })
                 await tx.commit()
-                // await this._session.run(query, {
-                //     source_ref,
-                //     target_ref,
-                //     sourceProps,
-                //     targetProps,
-                //     description,
-                // })
                 resolve()
             } catch (error: any) {
                 await tx.rollback()
@@ -74,7 +67,6 @@ class GraphDBConnectionHandler {
             try {
                 await tx.run(query, { id, platform })
                 await tx.commit()
-                // await this._session.run(query, { id, platform })
                 resolve()
             } catch (error: any) {
                 await tx.rollback()
@@ -92,7 +84,6 @@ class GraphDBConnectionHandler {
         return new Promise<void>(async (resolve, reject) => {
             const tx = this._session.beginTransaction()
             try {                
-                // await this._session.run(query, { id, domain })
                 await tx.run(query, { id, domain })
                 await tx.commit()
                 resolve()
