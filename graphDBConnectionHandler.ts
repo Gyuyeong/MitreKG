@@ -38,16 +38,26 @@ class GraphDBConnectionHandler {
         `
 
         return new Promise<void>(async (resolve, reject) => {
+            const tx = this._session.beginTransaction()
             try {
-                await this._session.run(query, {
+                await tx.run(query, {
                     source_ref,
                     target_ref,
                     sourceProps,
                     targetProps,
-                    description,
+                    description
                 })
+                await tx.commit()
+                // await this._session.run(query, {
+                //     source_ref,
+                //     target_ref,
+                //     sourceProps,
+                //     targetProps,
+                //     description,
+                // })
                 resolve()
             } catch (error: any) {
+                await tx.rollback()
                 reject(error)
             }
         })
@@ -60,10 +70,14 @@ class GraphDBConnectionHandler {
             MERGE (a)-[r:RELATED_TO_PLATFORM]->(b)
         `
         return new Promise<void>(async (resolve, reject) => {
+            const tx = this._session.beginTransaction()
             try {
-                await this._session.run(query, { id, platform })
+                await tx.run(query, { id, platform })
+                await tx.commit()
+                // await this._session.run(query, { id, platform })
                 resolve()
             } catch (error: any) {
+                await tx.rollback()
                 reject(error)
             }
         })
@@ -76,10 +90,62 @@ class GraphDBConnectionHandler {
             MERGE (a)-[r:RELATED_TO_DOMAIN]->(b)
         `
         return new Promise<void>(async (resolve, reject) => {
-            try {
-                await this._session.run(query, { id, domain })
+            const tx = this._session.beginTransaction()
+            try {                
+                // await this._session.run(query, { id, domain })
+                await tx.run(query, { id, domain })
+                await tx.commit()
                 resolve()
             } catch (error: any) {
+                await tx.rollback()
+                reject(error)
+            }
+        })
+    }
+
+    async insertSectorsAndRelatedAssets(id: string, object: any) {
+        const sectors = object.x_mitre_sectors
+        const relatedAssets = object.x_mitre_related_assets
+        return new Promise<void>(async (resolve, reject) => {
+            const tx = this._session.beginTransaction()
+            try {
+                for (const sector of sectors) {
+                    await tx.run(
+                        `
+                            MATCH (a {id: $id})
+                            MERGE (b: X_MITRE_SECTOR {name: $sector})
+                            MERGE (a)-[r:RELATED_TO_SECTOR]->(b)
+                        `
+                    , { id, sector })
+                }
+                for (const relatedAsset of relatedAssets) {
+                    const name = relatedAsset.name
+                    const relatedAssetSectors = relatedAsset.related_asset_sectors
+                    const description = relatedAsset.description
+
+                    await tx.run(
+                        `
+                            MATCH (a {id: $id})
+                            MERGE (b: X_MITRE_RELATED_ASSET {name: $name, description: $description})
+                            MERGE (b)-[r:RELATED_TO_ASSET]->(a)
+                        `
+                    , { id, name, description })
+
+                    for (const relatedAssetSector of relatedAssetSectors) {
+                        await tx.run(
+                            `
+                                MATCH (a: X_MITRE_RELATED_ASSET {name: $name})
+                                MERGE (b: X_MITRE_SECTOR {name: $relatedAssetSector})
+                                MERGE (a)-[r:RELATED_TO_SECTOR]->(b)
+                            `
+                        , { name, relatedAssetSector })
+                    }
+                }
+
+                await tx.commit()
+                resolve()
+            } catch (error: any) {
+                await tx.rollback()
                 reject(error)
             }
         })

@@ -132,9 +132,9 @@ class MitreKnowledgeGraphConstructor {
                 }
             }
 
-            // insert platform connection and domain connection
+            // insert platform connection
             for (const object of this._objects) {
-                const id = object.id
+                const id: string = object.id
                 if (platformConnectionTypes.includes(object.type)) {
                     const platforms = object.x_mitre_platforms
                     for (const platform of platforms) {
@@ -150,7 +150,9 @@ class MitreKnowledgeGraphConstructor {
                             continue
                         }
                     }
-                } else if (domainConnectionTypes.includes(object.type)) {
+                }
+                // insert domain connection
+                if (domainConnectionTypes.includes(object.type)) {
                     const domains = object.x_mitre_domains
                     for (const domain of domains) {
                         try {
@@ -159,6 +161,15 @@ class MitreKnowledgeGraphConstructor {
                             console.error(`id: ${id}\nDomain: ${domain}\nError: ${error}`)
                             continue
                         }
+                    }
+                }
+                // insert related assets and sectors
+                // only in ICS ATT&CK
+                if (object.type === "x-mitre-asset") {
+                    try {
+                        await graphDBConnectionHandler.insertSectorsAndRelatedAssets(id, object)
+                    } catch (error: any) {
+                        console.error(`id: ${id}\nError: ${error}`)
                     }
                 }
             }
