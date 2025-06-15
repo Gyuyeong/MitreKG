@@ -1,7 +1,5 @@
-import axios, { Axios, AxiosInstance } from "axios"
+import axios, { AxiosInstance } from "axios"
 import { CollectionEnum, CollectionType } from "./types"
-import HTTPStatus from "./httpStatus"
-import dotenv from "dotenv"
 
 /**
  * This connection handler is written based on

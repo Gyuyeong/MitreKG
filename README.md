@@ -1,6 +1,26 @@
 # MitreKG
 Attempt to build Knowledge Graph based on MITRE ATT&amp;CK and expand its use
 
+## Required Software
+```
+- node v22.16.0
+- neo4j Desktop
+```
+
+## How to Run
+1. Install necessary software and packages in `package.json`
+2. Create `.env` file with the following contents
+```
+NEO4J_URI = ...
+NEO4J_USERNAME = ...
+NEO4J_PASSWORD = ...
+DATABASE_NAME = ...
+```
+3. Run the following command to save knowledge graph to Neo4j
+```
+npm run exec main.ts
+```
+
 ## Noticable Relationship Explanation
 - Attack Pattern
 ```
