@@ -106,7 +106,7 @@ class MitreKnowledgeGraphConstructor {
             return acc
         }, {})
 
-        const platformConnectionTypes: ObjectType[] = ["attack-pattern", "tool", "malware", "x-mitre-data-source"]
+        const platformConnectionTypes: ObjectType[] = ["attack-pattern", "tool", "malware", "x-mitre-data-source", "x-mitre-asset"]
         const domainConnectionTypes: ObjectType[] = ["intrusion-set", "course-of-action", "x-mitre-data-source"]
 
         const graphDBConnectionHandler = new GraphDBConnectionHandler()
@@ -138,6 +138,11 @@ class MitreKnowledgeGraphConstructor {
                 if (platformConnectionTypes.includes(object.type)) {
                     const platforms = object.x_mitre_platforms
                     for (const platform of platforms) {
+                        // ICS attack patterns have "None" platforms
+                        // They imply multiple things
+                        // - platform agnostic technique
+                        // - conceptual or preparatory technique
+                        // - The system an adversary is operating within; could be an operating system or application
                         try {
                             await graphDBConnectionHandler.insertPlatformConnection(id, platform)
                         } catch (error: any) {

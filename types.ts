@@ -19,6 +19,7 @@ export type ObjectType = "attack-pattern"
                         | "tool" 
                         | "x-mitre-matrix" 
                         | "x-mitre-data-source"
+                        | "x-mitre-asset"
 
 export type ObjectDataType = {
     id: string,
@@ -69,5 +70,19 @@ export type MitrePlatform = "Windows"
                             | "SaaS" 
                             | "Office Suite" 
                             | "Identity Provider"
+                            | "Android"
+                            | "iOS"
+                            | "Field Controller/RTU/PLC/IED"
+                            | "Engineering Workstation"
+                            | "Control Server"
+                            | "Safety Instrumented System/Protection Relay"
+                            | "Input/Output Server"
+                            | "Embedded"
+                            // ICS attack patterns have "None" platforms
+                            // They imply multiple things
+                            // - platform agnostic technique
+                            // - conceptual or preparatory technique
+                            // - The system an adversary is operating within; could be an operating system or application
+                            | "None"
 
 export type MitreDomain = "enterprise-attack" | "mobile-attack" | "ics-attack"
